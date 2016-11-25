@@ -99,11 +99,11 @@ public void saveEmployeeDetails(Employee employee) throws Exception {
 }
 
 
-public List<JobDetails> filterJobDetailsByDate(int empId, Date fromDate, Date toDate) throws Exception {
+public List<JobDetails> filterJobDetailsByDate(Employee employee, Date fromDate, Date toDate) throws Exception {
 
 	List<JobDetails> filteredJobDetails = null;
 	
-	filteredJobDetails = jobDetailsDao.findJobDetailsById(empId,fromDate, toDate);
+	filteredJobDetails = jobDetailsDao.findJobDetailsById(employee,fromDate, toDate);
 	
 	return filteredJobDetails;
 }

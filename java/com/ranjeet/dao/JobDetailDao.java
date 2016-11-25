@@ -137,16 +137,19 @@ public class JobDetailDao {
 
 	@Transactional(propagation = Propagation.SUPPORTS)
 	@SuppressWarnings("unchecked")
-	public List<JobDetails> findJobDetailsById(int empId, Date fromDate, Date toDate) throws Exception {
-
+	public List<JobDetails> findJobDetailsById(Employee employee, Date fromDate, Date toDate) throws Exception {
+		
 		List<JobDetails> filteredjobDetails = null;
 		try {
 			Session session = this.sessionFactory.getCurrentSession();
 			Criteria criteria = session.createCriteria(JobDetails.class)
 					//.createAlias("employee", "e")
-					.createAlias("savedDate", "savedDate")
+					//.createAlias("savedDate", "savedDate")
+					//.createAlias("empId", "empId")
 					//.add(Restrictions.eq("e.id", empId))
-					.add(Restrictions.between("savedDate", fromDate, toDate));
+					.add(Restrictions.ge("savedDate", fromDate))
+					.add(Restrictions.le("savedDate", toDate))
+					.add(Restrictions.eq("employee", employee));
 			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 			filteredjobDetails = criteria.list();
 		} catch (DataAccessException e) {

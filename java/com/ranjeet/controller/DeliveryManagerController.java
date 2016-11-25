@@ -259,6 +259,15 @@ public class DeliveryManagerController {
 			if (json.containsKey("toDate")) {
 				toDate = (String) json.get("toDate");
 			}
+			
+			Employee fetchedemployee = new Employee();
+			// emp.setId(Integer.parseInt(empId));
+			fetchedemployee = deliveryManagementService
+					.findEmployeeByEmployeeId(Integer.parseInt(empId));
+			// emp.setFirstName(empName);
+			// emp.setLastName(empName);
+			// emp.setEmployeeId(12);
+			System.out.println(fetchedemployee);
 
 			System.out.println(fromDate);
 			System.out.println(toDate);
@@ -274,7 +283,7 @@ public class DeliveryManagerController {
 			System.out.println(toDateAsString);
 
 			filteredJobDetails = deliveryManagementService
-					.filterJobDetailsByDate(Integer.parseInt(empId),
+					.filterJobDetailsByDate(fetchedemployee,
 							java.sql.Date.valueOf(fromDateAsString),
 							java.sql.Date.valueOf(toDateAsString));
 

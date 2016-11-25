@@ -423,6 +423,7 @@ $(document)
 										if (response != null) {
 											console.log(response);
 											$('#filter_action').show();
+											$("#empDetails").html("");
 											var data = "<div style='padding: 10px 0px 5px 0px;'><b>Job Details</b></div>";
 											data = data
 													+ "<table border='1'><thead><tr><th style='text-align: center;padding: 5px;'>Part Number</th><th style='text-align: center;padding: 5px;'>Planned Quantity</th><th style='text-align: center;padding: 5px;'>Launched Quantity</th><th style='text-align: center;padding: 5px;'>Delivered Quantity</th><th style='text-align: center;padding: 5px;'>Delivered Date</th></tr></thead><tbody>";
