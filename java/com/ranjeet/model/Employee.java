@@ -12,6 +12,8 @@ import javax.persistence.Id;
 import javax.persistence.OneToMany;
 import javax.persistence.Table;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+
 @Entity
 @Table(name="EMPLOYEE")
 public class Employee {
@@ -22,7 +24,7 @@ public class Employee {
 	private int id;
 	
 	@Column(name="emp_id", nullable=false)
-	private String employeeId;
+	private int employeeId;
 	
 	@Column(name="emp_first_name", nullable=false)
 	private String firstName;
@@ -30,6 +32,7 @@ public class Employee {
 	@Column(name="emp_last_name", nullable=false)
 	private String lastName;
 	
+	@JsonIgnore
 	@OneToMany(fetch=FetchType.EAGER, cascade=CascadeType.ALL, mappedBy="employee")
 	private Set<JobDetails> jobDetails;
 
@@ -41,11 +44,11 @@ public class Employee {
 		this.id = id;
 	}
 
-	public String getEmployeeId() {
+	public int getEmployeeId() {
 		return employeeId;
 	}
 
-	public void setEmployeeId(String employeeId) {
+	public void setEmployeeId(int employeeId) {
 		this.employeeId = employeeId;
 	}
 
@@ -72,11 +75,5 @@ public class Employee {
 	public void setJobDetails(Set<JobDetails> jobDetails) {
 		this.jobDetails = jobDetails;
 	}
-	
-	
-	
-	
-	
-	
 
 }

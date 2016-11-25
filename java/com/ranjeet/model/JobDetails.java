@@ -1,5 +1,7 @@
 package com.ranjeet.model;
 
+import java.util.Date;
+
 import javax.persistence.Column;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
@@ -8,6 +10,8 @@ import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 import javax.persistence.Table;
+import javax.persistence.Temporal;
+import javax.persistence.TemporalType;
 
 @Entity
 @Table(name = "job_details")
@@ -24,7 +28,50 @@ public class JobDetails {
 	private Employee employee;
 	
 	@Column(name="part_number")
-	private int partNumber;
+	private String partNumber;
+	
+	@Column(name="launched_quantity")
+	private String launchedQuantity;
+	
+	@Column(name="saved_date", nullable=false)
+	@Temporal(TemporalType.DATE)
+	private Date savedDate;
+	
+	public String getLaunchedQuantity() {
+		return launchedQuantity;
+	}
+
+
+	public void setLaunchedQuantity(String launchedQuantity) {
+		this.launchedQuantity = launchedQuantity;
+	}
+
+
+	public String getPlannedQuantity() {
+		return plannedQuantity;
+	}
+
+
+	public void setPlannedQuantity(String plannedQuantity) {
+		this.plannedQuantity = plannedQuantity;
+	}
+
+
+	public String getDeliveredQuantity() {
+		return deliveredQuantity;
+	}
+
+
+	public void setDeliveredQuantity(String deliveredQuantity) {
+		this.deliveredQuantity = deliveredQuantity;
+	}
+
+
+	@Column(name="planned_quantity")
+	private String plannedQuantity;
+	
+	@Column(name="delivered_quantity")
+	private String deliveredQuantity;
 
 
 	public int getJobId() {
@@ -47,13 +94,23 @@ public class JobDetails {
 	}
 
 
-	public int getPartNumber() {
+	public String getPartNumber() {
 		return partNumber;
 	}
 
 
-	public void setPartNumber(int partNumber) {
+	public void setPartNumber(String partNumber) {
 		this.partNumber = partNumber;
+	}
+
+
+	public Date getSavedDate() {
+		return savedDate;
+	}
+
+
+	public void setSavedDate(Date savedDate) {
+		this.savedDate = savedDate;
 	}
 	
 	

@@ -1,5 +1,6 @@
 package com.ranjeet.service;
 
+import java.util.Date;
 import java.util.List;
 
 import org.apache.log4j.Logger;
@@ -30,10 +31,9 @@ public class DeliveryManagementService {
 	
 	
 	public void saveJobDetails(JobDetails jobDetails) throws Exception {
-		Employee employee = null;
 		try {
-			employee = jobDetailsDao.getEmployeeDetails(jobDetails.getEmployee().getEmployeeId());	
-			jobDetails.setEmployee(employee);
+			//employee = jobDetailsDao.getEmployeeDetails(jobDetails.getEmployee().getEmployeeId());	
+			//jobDetails.setEmployee(employee);
 			jobDetailsDao.saveJobDetails(jobDetails);
 
 		}catch (Exception e){
@@ -42,7 +42,7 @@ public class DeliveryManagementService {
 		}
 	}
 	
-	public Employee getEmployee(String employeeId) throws Exception {
+	public Employee getEmployee(int employeeId) throws Exception {
 		
 		Employee employee = new Employee();
 		
@@ -51,5 +51,61 @@ public class DeliveryManagementService {
 		return employee;
 		
 	}
+	
+public List<Employee> getEmployeeDetailsFromActualEmployeeId(int employeeId) throws Exception {
+		
+		List<Employee> employees = null;
+		
+		employees = jobDetailsDao.getEmployeeDetailsFromActualEmployeeId(employeeId);
+		
+		return employees;
+
+	}
+
+
+public Employee findEmployeeByEmployeeId(int employeeId) {
+	
+	Employee employee = null;
+	
+	employee = jobDetailsDao.findEmployeeByEmployeeId(employeeId);
+	
+	return employee;
+	
+}
+
+
+public List<JobDetails> findJobDetailsById(int empId) throws Exception {
+
+	List<JobDetails> fetchedJobDetails = null;
+	
+	fetchedJobDetails = jobDetailsDao.findJobDetailsById(empId);
+	
+	return fetchedJobDetails;
+}
+
+
+public void saveEmployeeDetails(Employee employee) throws Exception {
+
+	try {
+
+		jobDetailsDao.saveEmployeeDetails(employee);
+
+	}catch (Exception e){
+		LOG.error("Error in fetching hotels" + e);
+		throw new Exception(e);
+	}
+	
+	
+}
+
+
+public List<JobDetails> filterJobDetailsByDate(int empId, Date fromDate, Date toDate) throws Exception {
+
+	List<JobDetails> filteredJobDetails = null;
+	
+	filteredJobDetails = jobDetailsDao.findJobDetailsById(empId,fromDate, toDate);
+	
+	return filteredJobDetails;
+}
 
 }
