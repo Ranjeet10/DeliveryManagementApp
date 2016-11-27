@@ -18,8 +18,7 @@
 <link href="${pageContext.request.contextPath}/resources/css/signin.css"
 	rel="stylesheet">
 <link
-	href="${pageContext.request.contextPath}/resources/css/jquery-ui.min.css"
-	rel="stylesheet">
+	href="${pageContext.request.contextPath}/resources/css/jquery-ui.min.css" rel="stylesheet">
 <link
 	href="${pageContext.request.contextPath}/resources/css/theme.css"
 	rel="stylesheet">
@@ -50,17 +49,35 @@
 						<td>Today is:</td>
 						<td id="today_date"></td>
 						</tr>
-						<tr>
+						<!-- <tr>
 						<td>Enter your Employee Id:</td>
 						<td><input id="empId_add_job" name="empId" /></td>
+						</tr> -->
+						<tr>
+							<td>Employee:</td>
+							<td ><select id="employee_select" style="width:100%;">
+									<option value="-1">--Select Employee--</option>
+									<c:forEach items="${employees}" var="employee">
+										<option value="${employee.id}">${employee.firstName}</option>
+									</c:forEach>
+							</select></td>
+						</tr>
+						<tr>
+							<td>Machine:</td>
+							<td ><select id="machine_select" style="width:100%;">
+									<option value="-1">--Select Machine--</option>
+									<c:forEach items="${machines}" var="machine">
+										<option value="${machine.id}">${machine.machineName}</option>
+									</c:forEach>
+							</select></td>
 						</tr>
 						<tr><td>Part Number:</td><td><input id="partNumber" name="partNumber"/></td></tr>
 						<tr><td>Planned Quantity:</td><td><input id="plannedQauntity" name="plannedQauntity"/></td></tr>
 						<tr><td>Launched Quantity:</td><td><input id="launchedQuantity" name="launchedQuantity"/></td></tr>
 						<tr><td>Delivered Quantity:</td><td><input id="deliveredQuantity" name="deliveredQuantity"/></td></tr>
 						<tr>
-						    <td style="padding: 10px 0px 0px 0px;"><input type="submit" class="btn btn-xs btn-primary pull-left" id="save_details"value="Save Details"></td>
-							<td style="padding: 10px 0px 0px 0px;">
+						    <td><input type="submit" class="btn btn-xs btn-primary pull-left" id="save_details"value="Save Details"></td>
+							<td>
 							<button type="button" class="btn btn-xs btn-success btn-block pull-right" style="width: 77px;" onclick="window.location.href='/DeliveryManagement'">Cancel</button></td>
 						</tr>
 					</table>
@@ -68,6 +85,5 @@
 			<span id="msg"></span>
 
 		</div>
-	</div>
 </body>
 </html>

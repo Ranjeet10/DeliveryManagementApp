@@ -59,7 +59,7 @@
 							<td><span id="city_err" style="color:red;margin-left: 10px;"></span></td>
 						</tr> --%>
 					<tr>
-						<td><input id="empId_info" name="empId" /></td>
+						<td><input id="empId_info" placeholder='Part Number' name="empId" /></td>
 						<td><input style="margin-left: 10px;" type="submit"
 							class="btn btn-xs btn-primary" id="get_emp_details"
 							value="Get info"></td>

@@ -68,6 +68,5 @@
 				<span id="msg"></span>
 			</div>
 		</div>
-	</div>
 </body>
 </html>

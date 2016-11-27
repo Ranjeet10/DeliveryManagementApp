@@ -27,8 +27,12 @@ public class JobDetails {
 	@JoinColumn(name="emp_id", nullable=false)
 	private Employee employee;
 	
+	@ManyToOne
+	@JoinColumn(name="machine_id", nullable=false)
+	private Machine machine;
+	
 	@Column(name="part_number")
-	private String partNumber;
+	private int partNumber;
 	
 	@Column(name="launched_quantity")
 	private String launchedQuantity;
@@ -94,12 +98,12 @@ public class JobDetails {
 	}
 
 
-	public String getPartNumber() {
+	public int getPartNumber() {
 		return partNumber;
 	}
 
 
-	public void setPartNumber(String partNumber) {
+	public void setPartNumber(int partNumber) {
 		this.partNumber = partNumber;
 	}
 
@@ -112,7 +116,15 @@ public class JobDetails {
 	public void setSavedDate(Date savedDate) {
 		this.savedDate = savedDate;
 	}
-	
-	
-	
+
+
+	public Machine getMachine() {
+		return machine;
+	}
+
+
+	public void setMachine(Machine machine) {
+		this.machine = machine;
+	}
+		
 }

@@ -1,6 +1,5 @@
 package com.ranjeet.controller;
 
-import java.text.DateFormat;
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.List;
@@ -18,6 +17,7 @@ import org.apache.log4j.Logger;
 
 import com.ranjeet.model.Employee;
 import com.ranjeet.model.JobDetails;
+import com.ranjeet.model.Machine;
 import com.ranjeet.service.DeliveryManagementService;
 
 @Controller
@@ -36,8 +36,20 @@ public class DeliveryManagerController {
 
 	@RequestMapping("/addEmployeeDetails")
 	public String addEmployeeDetails(Model model) {
-		return "home";
+		return "addEmployee";
 	}
+	
+	
+	@RequestMapping("/addMachineDetails")
+	public String addMachineDetails(Model model) {
+		return "addMachine";
+	}
+	
+	@RequestMapping("/showAdminPage")
+	public String showAdminPage(Model model) {
+		return "adminPage";
+	}
+	
 
 	@RequestMapping(value = "/saveEmployeeDetails", method = RequestMethod.POST)
 	@ResponseBody
@@ -70,7 +82,36 @@ public class DeliveryManagerController {
 		} catch (Exception e) {
 			LOG.error("Not able to book Hotel", e);
 		}
-		return "book";
+		return "addEmployee";
+	}
+	
+	@RequestMapping(value = "/saveMachineDetails", method = RequestMethod.POST)
+	@ResponseBody
+	public String saveMachineDetails(@RequestBody String machineDetails) {
+
+		Machine machine = null;
+		JSONObject json = new JSONObject();
+		String machineName = null;
+		String machineId = null;
+
+		try {
+			json = (JSONObject) (new JSONParser().parse(machineDetails));
+			if (json.containsKey("machineId")) {
+				machineId = (String) json.get("machineId");
+			}
+			if (json.containsKey("machineName")) {
+				machineName = (String) json.get("machineName");
+			}
+
+			machine = new Machine();
+			machine.setMachineName(machineName);
+			machine.setMachineId(Integer.parseInt(machineId));
+			deliveryManagementService.saveMachineDetails(machine);
+
+		} catch (Exception e) {
+			LOG.error("Not able to book Hotel", e);
+		}
+		return "addMachine";
 	}
 
 	@RequestMapping("/getDetailsForm")
@@ -97,7 +138,22 @@ public class DeliveryManagerController {
 	@RequestMapping("/addJobDetails")
 	public String getJobForm(Model model) {
 		try {
+			System.out.println("Details");
+			List<Employee> employees = deliveryManagementService
+					.getAllEmployees();
+			List<Machine> machines = deliveryManagementService.getAllMachines();
+			System.out.println("Details");
+			System.out.println(employees);
+			System.out.println(machines);
+			
+			model.addAttribute("employees", employees);
+			model.addAttribute("machines", machines);
 			model.addAttribute("jobForm", new JobDetails());
+			// employee = deliveryManagementService.getEmployee(1);
+			// System.out.println(employee.getFirstName());
+			// employees1 =
+			// deliveryManagementService.findEmployeeByEmployeeId(12);
+			// System.out.println(employees1);
 
 		} catch (Exception e) {
 			LOG.error("Not able to fetch cities", e);
@@ -132,6 +188,7 @@ public class DeliveryManagerController {
 		String launchedQuantity = null;
 		String deliveredQuantity = null;
 		String savedDate = null;
+		String machineId = null;
 
 		try {
 
@@ -157,22 +214,28 @@ public class DeliveryManagerController {
 			if (json.containsKey("savedDate")) {
 				savedDate = (String) json.get("savedDate");
 			}
+			if (json.containsKey("machineId")) {
+				machineId = (String) json.get("machineId");
+			}
 
 			details = new JobDetails();
 			Employee fetchedemployee = new Employee();
-			// emp.setId(Integer.parseInt(empId));
-			fetchedemployee = deliveryManagementService
-					.findEmployeeByEmployeeId(Integer.parseInt(empId));
-			// emp.setFirstName(empName);
-			// emp.setLastName(empName);
-			// emp.setEmployeeId(12);
+			fetchedemployee = deliveryManagementService.getEmployee(Integer
+					.parseInt(empId));
+
 			System.out.println(fetchedemployee);
 
+			Machine fetchedmachine = new Machine();
+			fetchedmachine = deliveryManagementService.getMachine(Integer
+					.parseInt(machineId));
+			System.out.println(fetchedmachine);
+
 			details.setEmployee(fetchedemployee);
-			details.setPartNumber(partNumber);
+			details.setPartNumber(Integer.parseInt(partNumber));
 			details.setPlannedQuantity(plannedQuantity);
 			details.setLaunchedQuantity(launchedQuantity);
 			details.setDeliveredQuantity(deliveredQuantity);
+			details.setMachine(fetchedmachine);
 			System.out.println(savedDate);
 			java.sql.Date sqlDate = new java.sql.Date((new SimpleDateFormat(
 					"YYYY-MM-DD").parse(savedDate)).getTime());
@@ -181,7 +244,7 @@ public class DeliveryManagerController {
 			deliveryManagementService.saveJobDetails(details);
 
 		} catch (Exception e) {
-			LOG.error("Not able to book Hotel", e);
+			LOG.error("Not able to save job details", e);
 		}
 	}
 
@@ -292,6 +355,31 @@ public class DeliveryManagerController {
 		}
 
 		return filteredJobDetails;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getJobDetailsByPartNumber", method = RequestMethod.POST)
+	public List<JobDetails> getJobDetailsByPartNumber(@RequestBody String employee)
+			throws Exception {
+
+		List<JobDetails> fetchedJobDetails = null;
+		JSONObject json = new JSONObject();
+		String partNumber = null;
+
+		try {
+			json = (JSONObject) (new JSONParser().parse(employee));
+			if (json.containsKey("partNumber")) {
+				partNumber = (String) json.get("partNumber");
+			}
+			System.out.println(partNumber);
+			fetchedJobDetails = deliveryManagementService
+					.findJobDetailsByPartNumber(Integer.parseInt(partNumber));
+
+		} catch (Exception e) {
+			LOG.error("Not able to get Details", e);
+		}
+
+		return fetchedJobDetails;
 	}
 
 }

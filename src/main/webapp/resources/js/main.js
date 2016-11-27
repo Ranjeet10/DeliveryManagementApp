@@ -98,68 +98,45 @@ $(document)
 					// }
 					// });
 
-					$(document)
-							.on(
-									"click",
-									"#get_emp_details",
-									function(e) {
-
-										var employee = {};
-										var empId = $('#empId_info').val();
-										employee["empId"] = empId;
-
-										if (true) {
-
-											$
-													.ajax({
-														type : "POST",
-														url : "getEmployeeDetails",
-														data : JSON
-																.stringify(employee),
-														contentType : "application/json; charset=utf-8",
-														dataType : "json",
-														success : function(
-																response,
-																textStatus,
-																jqXHR) {
-															if (response != null) {
-																console
-																		.log(response);
-																$("#empDetails")
-																		.html(
-																				"");
-																var data = "<b>Hello, </b>";
-																data = data
-																		+ "<i>"
-																		+ response.firstName
-																		+ " "
-																		+ response.lastName
-																		+ "</i>";
-																$("#empDetails")
-																		.append(
-																				data);
-
-																getJobDetailsAsPerEmployee(response.id);
-															}
-														},
-														error : function(jqXHR,
-																textStatus,
-																erroThrown) {
-															alert("Snot able to fetch employee details");
-														}
-													});
-										}
-									});
-
-					function getJobDetailsAsPerEmployee(id) {
+					$(document).on("click", "#get_emp_details", function(e) {
 
 						var employee = {};
-						employee["id"] = String(id);
+						var empId = $('#empId_info').val();
+						employee["empId"] = empId;
+
+						if (true) {
+							getJobDetailsAsPerEmployee();
+
+							/*
+							 * $ .ajax({ type : "POST", url :
+							 * "getEmployeeDetails", data : JSON
+							 * .stringify(employee), contentType :
+							 * "application/json; charset=utf-8", dataType :
+							 * "json", success : function( response, textStatus,
+							 * jqXHR) { if (response != null) { console
+							 * .log(response); $("#empDetails") .html( ""); var
+							 * data = "<b>Hello, </b>"; data = data + "<i>" +
+							 * response.firstName + " " + response.lastName + "</i>";
+							 * $("#empDetails") .append( data);
+							 * 
+							 * getJobDetailsAsPerEmployee(response.id); } },
+							 * error : function(jqXHR, textStatus, erroThrown) {
+							 * alert("Snot able to fetch employee details"); }
+							 * });
+							 */
+						}
+					});
+
+					function getJobDetailsAsPerEmployee() {
+
+						var empId = $('#empId_info').val();
+						var employee = {};
+						employee["partNumber"] = empId;
 
 						$
 								.ajax({
 									type : "POST",
-									url : "getJobDetails",
+									url : "getJobDetailsByPartNumber",
 									data : JSON.stringify(employee),
 									contentType : "application/json; charset=utf-8",
 									dataType : "json",
@@ -273,7 +250,8 @@ $(document)
 										// var numberOfRooms =
 										// $("#number_Of_Rooms").val();
 										// var empId = $("#loggedInUser").val();
-										var empId = $('#empId_add_job').val();
+										// var empId =
+										// $('#empId_add_job').val();
 										var partNumber = $('#partNumber').val();
 										var plannedQauntity = $(
 												'#plannedQauntity').val();
@@ -281,6 +259,12 @@ $(document)
 												'#launchedQuantity').val();
 										var deliveredQuantity = $(
 												'#deliveredQuantity').val();
+										var empId = $(
+												"#employee_select option:selected")
+												.val();
+										var machineId = $(
+												"#machine_select option:selected")
+												.val();
 										var savedDate = $("#today_date").html();
 										// var partNumber = "213141431";
 										var jobDetails = {};
@@ -353,6 +337,7 @@ $(document)
 											jobDetails["launchedQuantity"] = launchedQuantity;
 											jobDetails["deliveredQuantity"] = deliveredQuantity;
 											jobDetails["savedDate"] = savedDate;
+											jobDetails["machineId"] = machineId;
 											// jobDetails["cityName"] =
 											// cityName;
 											// jobDetails["hotelId"] = hotelId;
@@ -460,5 +445,53 @@ $(document)
 								});
 
 					}
+
+					$(document)
+							.on(
+									"click",
+									"#add_machine_details",
+									function(e) {
+										var machineId = $('#add_machine_id')
+												.val();
+										var machineName = $('#add_machine_name')
+												.val();
+										var machineDetails = {};
+										if (true) {
+											machineDetails["machineId"] = machineId;
+											machineDetails["machineName"] = machineName;
+
+											$
+													.ajax({
+														type : "POST",
+														url : "saveMachineDetails",
+														data : JSON
+																.stringify(machineDetails),
+														contentType : "application/json; charset=utf-8",
+														success : function(
+																data,
+																textStatus,
+																jqXHR) {
+															if (data == null
+																	|| data == "") {
+																var savingMsg = "error";
+																$("#msg")
+																		.html(
+																				savingMsg);
+															} else {
+																var savingMsg = "saved ";
+																$("#msg")
+																		.html(
+																				savingMsg);
+															}
+
+														},
+														error : function(jqXHR,
+																textStatus,
+																erroThrown) {
+															alert("Something went wrong, not able to book rooms");
+														}
+													});
+										}
+									});
 
 				});

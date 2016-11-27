@@ -20,27 +20,24 @@ import org.springframework.util.CollectionUtils;
 
 import com.ranjeet.model.Employee;
 import com.ranjeet.model.JobDetails;
-
+import com.ranjeet.model.Machine;
 
 @Transactional
 @Repository
 public class JobDetailDao {
-	
-	
+
 	private static Logger LOG = Logger.getLogger(JobDetailDao.class);
 
 	@Autowired
 	private SessionFactory sessionFactory;
 
-
 	@Autowired
 	private HibernateTemplate hibernateTemplate;
-	
-	
+
 	@Transactional(propagation = Propagation.REQUIRED, rollbackFor = Exception.class)
 	public void saveJobDetails(JobDetails jobDetail) throws Exception {
-		
-		try {			
+
+		try {
 			int jobId = (Integer) hibernateTemplate.save(jobDetail);
 			jobDetail.setJobId(jobId);
 			LOG.info("Job Detail saved successfully");
@@ -49,7 +46,8 @@ public class JobDetailDao {
 			LOG.debug(e.getMessage());
 		}
 	}
-	
+
+	@Transactional(propagation = Propagation.SUPPORTS)
 	public List<Employee> getAllEmployees() throws Exception {
 		try {
 			return hibernateTemplate.loadAll(Employee.class);
@@ -58,7 +56,7 @@ public class JobDetailDao {
 			throw new Exception(e.getMessage(), e);
 		}
 	}
-	
+
 	public Employee getEmployeeDetails(int employeeId) throws Exception {
 		Employee employee = null;
 		try {
@@ -70,16 +68,17 @@ public class JobDetailDao {
 		return employee;
 
 	}
-	
+
 	@SuppressWarnings("unchecked")
-	public List<Employee> getEmployeeDetailsFromActualEmployeeId(int employeeId) throws Exception {
-		
+	public List<Employee> getEmployeeDetailsFromActualEmployeeId(int employeeId)
+			throws Exception {
+
 		List<Employee> employees = null;
 		try {
 			Session session = this.sessionFactory.getCurrentSession();
 			Criteria criteria = session.createCriteria(Employee.class)
 					.createAlias("employee", "e")
-					.add(Restrictions.eq("e.empId",employeeId));
+					.add(Restrictions.eq("e.empId", employeeId));
 			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
 			employees = criteria.list();
 			System.out.println(employees);
@@ -90,14 +89,14 @@ public class JobDetailDao {
 		return employees;
 
 	}
-	
-	
+
 	@Transactional(propagation = Propagation.SUPPORTS)
 	public Employee findEmployeeByEmployeeId(int employeeId) {
 		@SuppressWarnings("unchecked")
-		List<Employee> employees = (List<Employee>) hibernateTemplate.findByCriteria(DetachedCriteria.forClass(Employee.class)
-				.add(Restrictions.eq("employeeId", employeeId)));
-		if(!CollectionUtils.isEmpty(employees)) {
+		List<Employee> employees = (List<Employee>) hibernateTemplate
+				.findByCriteria(DetachedCriteria.forClass(Employee.class).add(
+						Restrictions.eq("employeeId", employeeId)));
+		if (!CollectionUtils.isEmpty(employees)) {
 			return employees.get(0);
 		}
 		return null;
@@ -119,12 +118,12 @@ public class JobDetailDao {
 			throw new Exception(e.getMessage(), e);
 		}
 		return jobDetails;
-		
+
 	}
 
 	public void saveEmployeeDetails(Employee employee) throws Exception {
 
-		try {			
+		try {
 			int id = (Integer) hibernateTemplate.save(employee);
 			employee.setId(id);
 			LOG.info("Employee Details saved successfully");
@@ -132,21 +131,23 @@ public class JobDetailDao {
 		} catch (DataAccessException e) {
 			LOG.debug(e.getMessage());
 		}
-		
+
 	}
 
 	@Transactional(propagation = Propagation.SUPPORTS)
 	@SuppressWarnings("unchecked")
-	public List<JobDetails> findJobDetailsById(Employee employee, Date fromDate, Date toDate) throws Exception {
-		
+	public List<JobDetails> findJobDetailsById(Employee employee,
+			Date fromDate, Date toDate) throws Exception {
+
 		List<JobDetails> filteredjobDetails = null;
 		try {
 			Session session = this.sessionFactory.getCurrentSession();
-			Criteria criteria = session.createCriteria(JobDetails.class)
-					//.createAlias("employee", "e")
-					//.createAlias("savedDate", "savedDate")
-					//.createAlias("empId", "empId")
-					//.add(Restrictions.eq("e.id", empId))
+			Criteria criteria = session
+					.createCriteria(JobDetails.class)
+					// .createAlias("employee", "e")
+					// .createAlias("savedDate", "savedDate")
+					// .createAlias("empId", "empId")
+					// .add(Restrictions.eq("e.id", empId))
 					.add(Restrictions.ge("savedDate", fromDate))
 					.add(Restrictions.le("savedDate", toDate))
 					.add(Restrictions.eq("employee", employee));
@@ -157,8 +158,59 @@ public class JobDetailDao {
 			throw new Exception(e.getMessage(), e);
 		}
 		return filteredjobDetails;
-		
+
+	}
+
+	public void saveMachineDetails(Machine machine) throws Exception {
+		try {
+			int id = (Integer) hibernateTemplate.save(machine);
+			machine.setId(id);
+			LOG.info("Machine Details saved successfully");
+
+		} catch (DataAccessException e) {
+			LOG.debug(e.getMessage());
+		}
+	}
+
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public List<Machine> getAllMachines() throws Exception {
+		try {
+			return hibernateTemplate.loadAll(Machine.class);
+		} catch (DataAccessException e) {
+			LOG.debug(e.getMessage());
+			throw new Exception(e.getMessage(), e);
+		}
+	}
+
+	public Machine getMachineDetails(int machineId) throws Exception {
+		Machine machine = null;
+		try {
+			machine = hibernateTemplate.get(Machine.class, machineId);
+		} catch (DataAccessException e) {
+			LOG.debug(e.getMessage());
+			throw new Exception(e.getMessage(), e);
+		}
+		return machine;
+
 	}
 	
+	@Transactional(propagation = Propagation.SUPPORTS)
+	@SuppressWarnings("unchecked")
+	public List<JobDetails> findJobDetailsByPartNumber(int partNumber) throws Exception {
+		
+		List<JobDetails> jobDetails = null;
+		try {
+			Session session = this.sessionFactory.getCurrentSession();
+			Criteria criteria = session.createCriteria(JobDetails.class)
+					.add(Restrictions.eq("partNumber", partNumber));
+			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			jobDetails = criteria.list();
+		} catch (DataAccessException e) {
+			LOG.debug(e.getMessage());
+			throw new Exception(e.getMessage(), e);
+		}
+		return jobDetails;
+		
+	}
 
 }
