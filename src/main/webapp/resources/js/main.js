@@ -44,6 +44,12 @@ $(document)
 					$(function() {
 
 						$('#filter_action').hide();
+						$('input[name=shift]').click(function() {
+							if ($(this).is(':checked') && $(this).val() == "") {
+								$("#others").addClass("hide");
+								$("#others_input").removeClass("hide");
+							}
+						});
 						var d = new Date();
 						var curr_date = d.getDate();
 						var curr_month = d.getMonth() + 1; // Months are zero
@@ -129,56 +135,122 @@ $(document)
 
 					function getJobDetailsAsPerEmployee() {
 
+						$("#empDetails").html("");
 						var empId = $('#empId_info').val();
 						var employee = {};
-						employee["partNumber"] = empId;
+						var isValid = true;
+						$("#msg").html("");
+						$("#savingMsg").html("");
 
-						$
-								.ajax({
-									type : "POST",
-									url : "getJobDetailsByPartNumber",
-									data : JSON.stringify(employee),
-									contentType : "application/json; charset=utf-8",
-									dataType : "json",
-									success : function(response, textStatus,
-											jqXHR) {
-										if (response != null) {
-											console.log(response);
-											$('#filter_action').show();
-											var data = "<div style='padding: 10px 0px 5px 0px;'><b>Job Details</b></div>";
-											data = data
-													+ "<table border='1'><thead><tr><th style='text-align: center;padding: 5px;'>Part Number</th><th style='text-align: center;padding: 5px;'>Planned Quantity</th><th style='text-align: center;padding: 5px;'>Launched Quantity</th><th style='text-align: center;padding: 5px;'>Delivered Quantity</th><th style='text-align: center;padding: 5px;'>Delivered Date</th></tr></thead><tbody>";
-											$
-													.each(
-															response,
-															function(key, value) {
-																data = data
-																		+ "<tr><td style='text-align: center;padding: 5px;'>"
-																		+ value.partNumber
-																		+ "</td>"
-																		+ "<td style='text-align: center;padding: 5px;'>"
-																		+ value.plannedQuantity
-																		+ "</td>"
-																		+ "<td style='text-align: center;padding: 5px;'>"
-																		+ value.launchedQuantity
-																		+ "</td>"
-																		+ "<td style='text-align: center;padding: 5px;'>"
-																		+ value.deliveredQuantity
-																		+ "</td>"
-																		+ "<td style='text-align: center;padding: 5px;'>"
-																		+ value.savedDate
-																		+ "</td>"
-																		+ "</tr>";
-															});
-											data = data + "</tbody></table>";
-											$("#empDetails").append(data);
+						if (empId == "") {
+							$("#msg").html("Please provide Employee Id");
+							isValid = false;
+							return;
+						} else if (isNaN(empId)) {
+							$("#msg").html("Employee Id should be a number");
+							isValid = false;
+							return;
+						} else if (parseInt(empId) < 0) {
+							$("#msg").html("Employee Id cannot be negative");
+							isValid = false;
+							return;
+						}
+						if (isValid) {
+							employee["partNumber"] = empId;
+							$
+									.ajax({
+										type : "POST",
+										url : "getJobDetailsByPartNumber",
+										data : JSON.stringify(employee),
+										contentType : "application/json; charset=utf-8",
+										dataType : "json",
+										success : function(response,
+												textStatus, jqXHR) {
+											if (response != null) {
+												console.log(response);
+												$('#filter_action').show();
+												$("#msg").html("");
+												var data = "<div style='padding: 10px 0px 5px 0px;'><b>Job Details</b></div>";
+												data = data
+														+ "<table border='1'><thead><tr><th style='text-align: center;padding: 5px;'>Part Number</th><th style='text-align: center;padding: 5px;'>Employee</th><th style='text-align: center;padding: 5px;'>Machine</th><th style='text-align: center;padding: 5px;'>Details</th><th style='text-align: center;padding: 5px;'>Quantity</th><th style='text-align: center;padding: 5px;'>Order Number</th><th style='text-align: center;padding: 5px;'>Working Hours</th><th style='text-align: center;padding: 5px;'>BreakDown</th><th style='text-align: center;padding: 5px;'>Remarks</th><th style='text-align: center;padding: 5px;'>Delivered Date</th></tr></thead><tbody>";
+												$
+														.each(
+																response,
+																function(key,
+																		value) {
+																	data = data
+																			+ "<tr><td style='text-align: center;padding: 5px;'>"
+																			+ value.partNumber
+																			+ "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.plannedQuantity
+																			// +
+																			// "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.launchedQuantity
+																			// +
+																			// "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.deliveredQuantity
+																			// +
+																			// "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.employee.firstName
+																			+ " "
+																			+ value.employee.lastName
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.machine.machineName
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.details
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.qunatity
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.productionOrderNumber
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.workingHours
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.breakdownHours
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.remarks
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.savedDate
+																			+ "</td>"
+																			+ "</tr>";
+																});
+												data = data
+														+ "</tbody></table>";
+												$("#empDetails").append(data);
+											}
+										},
+										error : function(jqXHR, textStatus,
+												erroThrown) {
+											alert("Not able to fetch job details");
 										}
-									},
-									error : function(jqXHR, textStatus,
-											erroThrown) {
-										alert("Snot able to fetch employee details");
-									}
-								});
+									});
+						}
 
 					}
 
@@ -193,7 +265,56 @@ $(document)
 										var lastName = $('#add_emp_last_name')
 												.val();
 										var employeeDetails = {};
-										if (true) {
+										var isValid = true;
+										$("#msg").html("");
+										$("#savingMsg").html("");
+
+										if (empId == "") {
+											$("#msg")
+													.html(
+															"Please provide employee Id");
+											isValid = false;
+											return;
+										} else if (isNaN(empId)) {
+											$("#msg")
+													.html(
+															"Employee Id should be a number");
+											isValid = false;
+											return;
+										} else if (parseInt(empId) < 0) {
+											$("#msg")
+													.html(
+															"Employee Id cannot be negative");
+											isValid = false;
+											return;
+										}
+										if (firstName == "") {
+											$("#msg")
+													.html(
+															"Please provide First Name");
+											isValid = false;
+											return;
+										} else if (!isNaN(firstName)) {
+											$("#msg")
+													.html(
+															"First Name should be a string");
+											isValid = false;
+											return;
+										}
+										if (lastName == "") {
+											$("#msg").html(
+													"Please provide Last Name");
+											isValid = false;
+											return;
+										} else if (!isNaN(lastName)) {
+											$("#msg")
+													.html(
+															"Last Name should be a string");
+											isValid = false;
+											return;
+										}
+
+										if (isValid) {
 											employeeDetails["empId"] = empId;
 											employeeDetails["firstName"] = firstName;
 											employeeDetails["lastName"] = lastName;
@@ -211,13 +332,15 @@ $(document)
 																jqXHR) {
 															if (data == null
 																	|| data == "") {
-																var savingMsg = "error";
-																$("#msg")
+																var savingMsg = "Error saving employee details";
+																$("#savingMsg")
 																		.html(
 																				savingMsg);
 															} else {
-																var savingMsg = "saved ";
-																$("#msg")
+																var savingMsg = "Employee Details saved successfully ";
+																$("#msg").html(
+																		"");
+																$("#savingMsg")
 																		.html(
 																				savingMsg);
 															}
@@ -237,28 +360,32 @@ $(document)
 									"click",
 									"#save_details",
 									function(e) {
-										// var cityName = $('#city_select
-										// :selected').html();
-										// var cityId = $('#city_select
-										// :selected').val();
-										// var hotelId = $('#hotel_select
-										// :selected').val();
-										// var checkInDate =
-										// $("#checkIn_Date").val();
-										// var checkOutDate =
-										// $("#checkOut_Date").val();
-										// var numberOfRooms =
-										// $("#number_Of_Rooms").val();
 										// var empId = $("#loggedInUser").val();
 										// var empId =
 										// $('#empId_add_job').val();
+										$("#msg").html("");
+										$("#savingMsg").html("");
 										var partNumber = $('#partNumber').val();
-										var plannedQauntity = $(
-												'#plannedQauntity').val();
-										var launchedQuantity = $(
-												'#launchedQuantity').val();
-										var deliveredQuantity = $(
-												'#deliveredQuantity').val();
+										/*
+										 * var plannedQauntity = $(
+										 * '#plannedQauntity').val(); var
+										 * launchedQuantity = $(
+										 * '#launchedQuantity').val(); var
+										 * deliveredQuantity = $(
+										 * '#deliveredQuantity').val();
+										 */
+										var details = $('#details').val();
+										var quantity = $('#quantity').val();
+										var orderNo = $('#orderNo').val();
+										var workingHours = $(
+												"input[name='shift']:checked")
+												.val();
+										if (workingHours == "") {
+											workingHours = $("#others_input")
+													.val();
+										}
+										var breakDown = $('#breakDown').val();
+										var remarks = $('#remarks').val();
 										var empId = $(
 												"#employee_select option:selected")
 												.val();
@@ -268,29 +395,22 @@ $(document)
 										var savedDate = $("#today_date").html();
 										// var partNumber = "213141431";
 										var jobDetails = {};
-										// var check_in = new Date(checkInDate);
-										// var check_Out = new
-										// Date(checkOutDate);
-										// $("#city_err").css("display","none");
-										// $("#hotel_err").css("display","none");
-										// $("#checkIn_Date_err").css("display","none");
-										// $("#checkOut_Date_err").css("display","none");
-										// $("#number_Of_Rooms_err").css("display","none");
-										// $("#bookingMsg").css("display","none");
 
-										// var isValid = true;
-										// if(cityId == -1) {
-										// $("#city_err").html("Value provided
-										// for city is incomplete.");
-										// $("#city_err").css("display","block");
-										// isValid = false;
-										// }
-										// if (hotelId == -1) {
-										// $("#hotel_err").html("Value provided
-										// for hotel is incomplete.");
-										// $("#hotel_err").css("display","block");
-										// isValid = false;
-										// }
+										var isValid = true;
+										if (empId == -1) {
+											$("#msg")
+													.html(
+															"Please select an employee");
+											isValid = false;
+											return;
+										}
+										if (machineId == -1) {
+											$("#msg").html(
+													"Please select a machine");
+											isValid = false;
+											return;
+										}
+
 										// if (checkInDate == "") {
 										// $("#checkIn_Date_err").html("Value
 										// provided for check in date is
@@ -298,45 +418,138 @@ $(document)
 										// $("#checkIn_Date_err").css("display","block");
 										// isValid = false;
 										// }
-										// if (checkOutDate == "") {
-										// $("#checkOut_Date_err").html("Value
-										// provided for check out date is
-										// incomplete.");
-										// $("#checkOut_Date_err").css("display","block");
-										// isValid = false;
-										// }else {
-										// if(check_in > check_Out ){
-										// $("#checkOut_Date_err").html("Check
-										// in date is greater than check out
-										// date.");
-										// $("#checkOut_Date_err").css("display","block");
-										// isValid = false;
-										// }
-										// }
-										//
-										// if (numberOfRooms == "") {
-										// $("#number_Of_Rooms_err").html("Value
-										// provided for number of rooms is
-										// incomplete.");
-										// $("#number_Of_Rooms_err").css("display","block");
-										// isValid = false;
-										// }else if(isNaN(numberOfRooms)){
-										// $("#number_Of_Rooms_err").html("Value
-										// provided for number of rooms is
-										// incorrect.");
-										// $("#number_Of_Rooms_err").css("display","block");
-										// isValid = false;
-										// }
 
-										// if(isValid){
-										if (true) {
+										//
+										if (partNumber == "") {
+											$("#msg")
+													.html(
+															"Please provide part Number");
+											isValid = false;
+											return;
+										} else if (isNaN(partNumber)) {
+											$("#msg")
+													.html(
+															"Part Number should be a number");
+											isValid = false;
+											return;
+										} else if (parseInt(partNumber) < 0) {
+											$("#msg")
+													.html(
+															"Part Number cannot be negative");
+											isValid = false;
+											return;
+										}
+
+										if (details == "") {
+											details = "";
+										}
+
+										if (quantity == "") {
+											$("#msg").html(
+													"Please provide quantity");
+											isValid = false;
+											return;
+										} else if (isNaN(quantity)) {
+											$("#msg")
+													.html(
+															"Quantity should be a number");
+											isValid = false;
+											return;
+										} else if (parseInt(quantity) < 0) {
+											$("#msg")
+													.html(
+															"Quantity cannot be negative");
+											isValid = false;
+											return;
+										}
+
+										if (workingHours == "") {
+											$("#msg")
+													.html(
+															"Please provide Working hours");
+											isValid = false;
+											return;
+										} else if (isNaN(workingHours)) {
+											$("#msg")
+													.html(
+															"Working hours should be a number");
+											isValid = false;
+											return;
+										} else if (parseInt(workingHours) < 0) {
+											$("#msg")
+													.html(
+															"Working hours should be greater than 0");
+											isValid = false;
+											return;
+										}
+
+										if (orderNo == "") {
+											$("#msg").html(
+													"Please provide order No.");
+											isValid = false;
+											return;
+										} else if (isNaN(orderNo)) {
+											$("#msg")
+													.html(
+															"Order No. should be a number");
+											isValid = false;
+											return;
+										} else if (parseInt(orderNo) < 0) {
+											$("#msg")
+													.html(
+															"Order number cannot be negative");
+											isValid = false;
+											return;
+										}
+
+										if (breakDown == "") {
+											breakDown = "0";
+										}
+										if (isNaN(breakDown)) {
+											$("#msg")
+													.html(
+															"Break down hours should be a number");
+											isValid = false;
+											return;
+										} else if (parseInt(breakDown) < 0) {
+											$("#msg")
+													.html(
+															"Break down hours should be greater than 0");
+											isValid = false;
+											return;
+										}
+
+										if (remarks == "") {
+											remarks = "";
+										}
+
+										if (isValid) {
+											/*
+											 * if
+											 * ($('input[name=shift]:checked')
+											 * .val() == "") {
+											 * $("#others").addClass("hide");
+											 * $("#others_input").removeClass(
+											 * "hide"); }
+											 */
 
 											jobDetails["empId"] = empId;
 											jobDetails["partNumber"] = partNumber;
-											jobDetails["plannedQauntity"] = plannedQauntity;
-											jobDetails["launchedQuantity"] = launchedQuantity;
-											jobDetails["deliveredQuantity"] = deliveredQuantity;
 											jobDetails["savedDate"] = savedDate;
+											/*
+											 * jobDetails["plannedQauntity"] =
+											 * plannedQauntity;
+											 * jobDetails["launchedQuantity"] =
+											 * launchedQuantity;
+											 * jobDetails["deliveredQuantity"] =
+											 * deliveredQuantity;
+											 */
+											jobDetails["details"] = details;
+											jobDetails["quantity"] = quantity;
+											jobDetails["orderNo"] = orderNo;
+											jobDetails["workingHours"] = workingHours;
+											jobDetails["breakDown"] = breakDown;
+											jobDetails["remarks"] = remarks;
 											jobDetails["machineId"] = machineId;
 											// jobDetails["cityName"] =
 											// cityName;
@@ -359,24 +572,16 @@ $(document)
 																data,
 																textStatus,
 																jqXHR) {
-															if (data == null
-																	|| data == "") {
-																var bookingMsg = "error";
-																$("#msg")
-																		.html(
-																				bookingMsg);
-															} else {
-																var bookingMsg = "saved ";
-																$("#msg")
-																		.html(
-																				bookingMsg);
-															}
-
+															var bookingMsg = "Details saved successfully ";
+															$("#msg").html("");
+															$("#successMsg")
+																	.html(
+																			bookingMsg);
 														},
 														error : function(jqXHR,
 																textStatus,
 																erroThrown) {
-															alert("Something went wrong, not able to book rooms");
+															alert("Something went wrong, not able to save details");
 														}
 													});
 										}
@@ -388,61 +593,146 @@ $(document)
 
 					function getFilteredJobDetailsByDate() {
 
+						$("#empDetails").html("");
+						var isValid = true;
 						var filteringDetails = {};
-						var empId = $('#empId_info').val();
+						// var empId = $('#empId_info').val();
+						var machineId = $(
+								"#machine_get_details option:selected").val();
+
 						var fromDate = $('#from_date').val();
 						var toDate = $('#to_date').val();
-						filteringDetails["id"] = String(empId);
-						filteringDetails["fromDate"] = String(fromDate);
-						filteringDetails["toDate"] = String(toDate);
+						$("#msg").html("");
+						$("#savingMsg").html("");
 
-						$
-								.ajax({
-									type : "POST",
-									url : "getFilteredJobDetails",
-									data : JSON.stringify(filteringDetails),
-									contentType : "application/json; charset=utf-8",
-									dataType : "json",
-									success : function(response, textStatus,
-											jqXHR) {
-										if (response != null) {
-											console.log(response);
-											$('#filter_action').show();
-											$("#empDetails").html("");
-											var data = "<div style='padding: 10px 0px 5px 0px;'><b>Job Details</b></div>";
-											data = data
-													+ "<table border='1'><thead><tr><th style='text-align: center;padding: 5px;'>Part Number</th><th style='text-align: center;padding: 5px;'>Planned Quantity</th><th style='text-align: center;padding: 5px;'>Launched Quantity</th><th style='text-align: center;padding: 5px;'>Delivered Quantity</th><th style='text-align: center;padding: 5px;'>Delivered Date</th></tr></thead><tbody>";
-											$
-													.each(
-															response,
-															function(key, value) {
-																data = data
-																		+ "<tr><td style='text-align: center;padding: 5px;'>"
-																		+ value.partNumber
-																		+ "</td>"
-																		+ "<td style='text-align: center;padding: 5px;'>"
-																		+ value.plannedQuantity
-																		+ "</td>"
-																		+ "<td style='text-align: center;padding: 5px;'>"
-																		+ value.launchedQuantity
-																		+ "</td>"
-																		+ "<td style='text-align: center;padding: 5px;'>"
-																		+ value.deliveredQuantity
-																		+ "</td>"
-																		+ "<td style='text-align: center;padding: 5px;'>"
-																		+ value.savedDate
-																		+ "</td>"
-																		+ "</tr>";
-															});
-											data = data + "</tbody></table>";
-											$("#empDetails").append(data);
+						if (machineId == -1) {
+							$("#msg").html("Please select a machine");
+							isValid = false;
+							return;
+						}
+
+						/*
+						 * if (empId == "") { $("#msg").html("Please provide
+						 * Employee Id"); isValid = false; return; } else if
+						 * (isNaN(empId)) { $("#msg").html("Employee Id should
+						 * be a number"); isValid = false; return; } else if
+						 * (parseInt(empId) < 0) { $("#msg").html("Employee Id
+						 * cannot be negative"); isValid = false; return; }
+						 */
+
+						if (fromDate == "") {
+							$("#msg").html("Please provide from date");
+							isValid = false;
+							return;
+						}
+						if (toDate == "") {
+							$("#msg").html("Please provide To date");
+							isValid = false;
+							return;
+						}
+
+						if (isValid) {
+
+							// filteringDetails["id"] = String(empId);
+							filteringDetails["machineId"] = String(machineId);
+							filteringDetails["fromDate"] = String(fromDate);
+							filteringDetails["toDate"] = String(toDate);
+
+							$
+									.ajax({
+										type : "POST",
+										// url : "getFilteredJobDetails",
+										url : "getFilteredJobDetailsByMachine",
+										data : JSON.stringify(filteringDetails),
+										contentType : "application/json; charset=utf-8",
+										dataType : "json",
+										success : function(response,
+												textStatus, jqXHR) {
+											if (response != null) {
+												console.log(response);
+												$('#filter_action').show();
+												$("#empDetails").html("");
+												var data = "<div style='padding: 10px 0px 5px 0px;'><b>Job Details</b></div>";
+												data = data
+														+ "<table border='1'><thead><tr><th style='text-align: center;padding: 5px;'>Part Number</th><th style='text-align: center;padding: 5px;'>Employee</th><th style='text-align: center;padding: 5px;'>Machine</th><th style='text-align: center;padding: 5px;'>Details</th><th style='text-align: center;padding: 5px;'>Quantity</th><th style='text-align: center;padding: 5px;'>Order Number</th><th style='text-align: center;padding: 5px;'>Working Hours</th><th style='text-align: center;padding: 5px;'>BreakDown</th><th style='text-align: center;padding: 5px;'>Remarks</th><th style='text-align: center;padding: 5px;'>Delivered Date</th></tr></thead><tbody>";
+												$
+														.each(
+																response,
+																function(key,
+																		value) {
+																	data = data
+																			+ "<tr><td style='text-align: center;padding: 5px;'>"
+																			+ value.partNumber
+																			+ "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.plannedQuantity
+																			// +
+																			// "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.launchedQuantity
+																			// +
+																			// "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.deliveredQuantity
+																			// +
+																			// "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.employee.firstName
+																			+ " "
+																			+ value.employee.lastName
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.machine.machineName
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.details
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.qunatity
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.productionOrderNumber
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.workingHours
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.breakdownHours
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.remarks
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.savedDate
+																			+ "</td>"
+																			+ "</tr>";
+																});
+												data = data
+														+ "</tbody></table>";
+												$("#empDetails").append(data);
+											}
+										},
+										error : function(jqXHR, textStatus,
+												erroThrown) {
+											alert("Not able to fetch job details");
 										}
-									},
-									error : function(jqXHR, textStatus,
-											erroThrown) {
-										alert("Snot able to fetch employee details");
-									}
-								});
+									});
+						}
 
 					}
 
@@ -451,13 +741,33 @@ $(document)
 									"click",
 									"#add_machine_details",
 									function(e) {
-										var machineId = $('#add_machine_id')
-												.val();
+										/*
+										 * var machineId = $('#add_machine_id')
+										 * .val();
+										 */
 										var machineName = $('#add_machine_name')
 												.val();
 										var machineDetails = {};
-										if (true) {
-											machineDetails["machineId"] = machineId;
+										var isValid = true;
+										$("#msg").html("");
+										$("#savingMsg").html("");
+
+										if (machineName == "") {
+											$("#msg")
+													.html(
+															"Please provide Machine Name");
+											isValid = false;
+											return;
+										} else if (!isNaN(machineName)) {
+											$("#msg")
+													.html(
+															"Machine Name should be a string");
+											isValid = false;
+											return;
+										}
+										if (isValid) {
+											// machineDetails["machineId"] =
+											// machineId;
 											machineDetails["machineName"] = machineName;
 
 											$
@@ -473,13 +783,13 @@ $(document)
 																jqXHR) {
 															if (data == null
 																	|| data == "") {
-																var savingMsg = "error";
-																$("#msg")
+																var savingMsg = "Error saving mahine details";
+																$("#savingMsg")
 																		.html(
 																				savingMsg);
 															} else {
-																var savingMsg = "saved ";
-																$("#msg")
+																var savingMsg = "Machine details saved successfully";
+																$("#savingMsg")
 																		.html(
 																				savingMsg);
 															}
@@ -493,5 +803,134 @@ $(document)
 													});
 										}
 									});
+
+					$(document).on("click", "#getJobDetailsByMachine",
+							function(e) {
+								getAllJobDetailsByMachine();
+							});
+
+					function getAllJobDetailsByMachine() {
+
+						$("#empDetails").html("");
+						// var machineName = $('#machine_name').val();
+						var machineId = $(
+								"#machine_get_details option:selected").val();
+						var machine = {};
+						var isValid = true;
+						$("#msg").html("");
+						$("#savingMsg").html("");
+						if (machineId == -1) {
+							$("#msg").html("Please select a machine");
+							isValid = false;
+							return;
+						}
+
+						// if (machineName == "") {
+						// $("#msg").html("Please provide Machine Name");
+						// isValid = false;
+						// return;
+						// } else if (!isNaN(machineName)) {
+						// $("#msg").html("Machine Name cannot be a number");
+						// isValid = false;
+						// return;
+						// }
+						if (isValid) {
+							machine["machineId"] = machineId;
+							$
+									.ajax({
+										type : "POST",
+										url : "getJobDetailsByMachineId",
+										data : JSON.stringify(machine),
+										contentType : "application/json; charset=utf-8",
+										dataType : "json",
+										success : function(response,
+												textStatus, jqXHR) {
+											if (response != null) {
+												console.log(response);
+												$('#filter_action').show();
+												$("#msg").html("");
+												var data = "<div style='padding: 10px 0px 5px 0px;'><b>Job Details</b></div>";
+												data = data
+														+ "<table border='1'><thead><tr><th style='text-align: center;padding: 5px;'>Part Number</th><th style='text-align: center;padding: 5px;'>Employee</th><th style='text-align: center;padding: 5px;'>Machine</th><th style='text-align: center;padding: 5px;'>Details</th><th style='text-align: center;padding: 5px;'>Quantity</th><th style='text-align: center;padding: 5px;'>Order Number</th><th style='text-align: center;padding: 5px;'>Working Hours</th><th style='text-align: center;padding: 5px;'>BreakDown</th><th style='text-align: center;padding: 5px;'>Remarks</th><th style='text-align: center;padding: 5px;'>Delivered Date</th></tr></thead><tbody>";
+												$
+														.each(
+																response,
+																function(key,
+																		value) {
+																	data = data
+																			+ "<tr><td style='text-align: center;padding: 5px;'>"
+																			+ value.partNumber
+																			+ "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.plannedQuantity
+																			// +
+																			// "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.launchedQuantity
+																			// +
+																			// "</td>"
+																			// +
+																			// "<td
+																			// style='text-align:
+																			// center;padding:
+																			// 5px;'>"
+																			// +
+																			// value.deliveredQuantity
+																			// +
+																			// "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.employee.firstName
+																			+ " "
+																			+ value.employee.lastName
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.machine.machineName
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.details
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.qunatity
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.productionOrderNumber
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.workingHours
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.breakdownHours
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.remarks
+																			+ "</td>"
+																			+ "<td style='text-align: center;padding: 5px;'>"
+																			+ value.savedDate
+																			+ "</td>"
+																			+ "</tr>";
+																});
+												data = data
+														+ "</tbody></table>";
+												$("#empDetails").append(data);
+											}
+										},
+										error : function(jqXHR, textStatus,
+												erroThrown) {
+											alert("Not able to fetch job details");
+										}
+									});
+						}
+
+					}
 
 				});

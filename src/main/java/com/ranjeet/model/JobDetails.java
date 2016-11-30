@@ -34,24 +34,42 @@ public class JobDetails {
 	@Column(name="part_number")
 	private int partNumber;
 	
-	@Column(name="launched_quantity")
-	private String launchedQuantity;
+	@Column(name="details")
+	private String details;
+	
+	@Column(name="qunatity")
+	private int qunatity;
+	
+	@Column(name="production_order_number")
+	private int productionOrderNumber;
+	
+	@Column(name="working_hours")
+	private int workingHours;
+	
+	@Column(name="breakdown_hours")
+	private int breakdownHours;
+	
+	@Column(name="remarks")
+	private String remarks;
+	
+	//@Column(name="launched_quantity")
+	//private String launchedQuantity;
 	
 	@Column(name="saved_date", nullable=false)
 	@Temporal(TemporalType.DATE)
 	private Date savedDate;
 	
-	public String getLaunchedQuantity() {
+	/*public String getLaunchedQuantity() {
 		return launchedQuantity;
 	}
 
 
 	public void setLaunchedQuantity(String launchedQuantity) {
 		this.launchedQuantity = launchedQuantity;
-	}
+	}*/
 
 
-	public String getPlannedQuantity() {
+	/*public String getPlannedQuantity() {
 		return plannedQuantity;
 	}
 
@@ -68,18 +86,79 @@ public class JobDetails {
 
 	public void setDeliveredQuantity(String deliveredQuantity) {
 		this.deliveredQuantity = deliveredQuantity;
-	}
+	}*/
 
 
-	@Column(name="planned_quantity")
+	/*@Column(name="planned_quantity")
 	private String plannedQuantity;
 	
 	@Column(name="delivered_quantity")
 	private String deliveredQuantity;
+	*/
 
 
 	public int getJobId() {
 		return jobId;
+	}
+
+
+	public String getDetails() {
+		return details;
+	}
+
+
+	public void setDetails(String details) {
+		this.details = details;
+	}
+
+
+	public int getQunatity() {
+		return qunatity;
+	}
+
+
+	public void setQunatity(int qunatity) {
+		this.qunatity = qunatity;
+	}
+
+
+	public int getProductionOrderNumber() {
+		return productionOrderNumber;
+	}
+
+
+	public void setProductionOrderNumber(int productionOrderNumber) {
+		this.productionOrderNumber = productionOrderNumber;
+	}
+
+
+	public int getWorkingHours() {
+		return workingHours;
+	}
+
+
+	public void setWorkingHours(int workingHours) {
+		this.workingHours = workingHours;
+	}
+
+
+	public int getBreakdownHours() {
+		return breakdownHours;
+	}
+
+
+	public void setBreakdownHours(int breakdownHours) {
+		this.breakdownHours = breakdownHours;
+	}
+
+
+	public String getRemarks() {
+		return remarks;
+	}
+
+
+	public void setRemarks(String remarks) {
+		this.remarks = remarks;
 	}
 
 

@@ -92,20 +92,16 @@ public class DeliveryManagerController {
 		Machine machine = null;
 		JSONObject json = new JSONObject();
 		String machineName = null;
-		String machineId = null;
 
 		try {
 			json = (JSONObject) (new JSONParser().parse(machineDetails));
-			if (json.containsKey("machineId")) {
-				machineId = (String) json.get("machineId");
-			}
 			if (json.containsKey("machineName")) {
 				machineName = (String) json.get("machineName");
 			}
 
 			machine = new Machine();
 			machine.setMachineName(machineName);
-			machine.setMachineId(Integer.parseInt(machineId));
+			//machine.setMachineId(Integer.parseInt(machineId));
 			deliveryManagementService.saveMachineDetails(machine);
 
 		} catch (Exception e) {
@@ -116,18 +112,11 @@ public class DeliveryManagerController {
 
 	@RequestMapping("/getDetailsForm")
 	public String getJobDetailsForm(Model model) {
-		// Employee employee = null;
-		// Employee employees1 = null;
+
 		try {
-			List<Employee> employees = deliveryManagementService
-					.getAllEmployees();
-			model.addAttribute("employees", employees);
-			model.addAttribute("jobForm", new JobDetails());
-			// employee = deliveryManagementService.getEmployee(1);
-			// System.out.println(employee.getFirstName());
-			// employees1 =
-			// deliveryManagementService.findEmployeeByEmployeeId(12);
-			// System.out.println(employees1);
+			List<Machine> machines = deliveryManagementService.getAllMachines();
+			System.out.println(machines);
+			model.addAttribute("machines", machines);
 
 		} catch (Exception e) {
 			LOG.error("Not able to fetch cities", e);
@@ -138,7 +127,6 @@ public class DeliveryManagerController {
 	@RequestMapping("/addJobDetails")
 	public String getJobForm(Model model) {
 		try {
-			System.out.println("Details");
 			List<Employee> employees = deliveryManagementService
 					.getAllEmployees();
 			List<Machine> machines = deliveryManagementService.getAllMachines();
@@ -184,11 +172,17 @@ public class DeliveryManagerController {
 		JSONObject json = new JSONObject();
 		String empId = null;
 		String partNumber = null;
-		String plannedQuantity = null;
+		/*String plannedQuantity = null;
 		String launchedQuantity = null;
-		String deliveredQuantity = null;
+		String deliveredQuantity = null;*/
 		String savedDate = null;
 		String machineId = null;
+		String detailsOfJob = null;
+		String quantity = null;
+		String orderNo = null;
+		String workingHours = null;
+		String remarks = null;
+		String breakDown = null;
 
 		try {
 
@@ -202,7 +196,7 @@ public class DeliveryManagerController {
 			if (json.containsKey("partNumber")) {
 				partNumber = (String) json.get("partNumber");
 			}
-			if (json.containsKey("plannedQuantity")) {
+			/*if (json.containsKey("plannedQuantity")) {
 				plannedQuantity = (String) json.get("plannedQuantity");
 			}
 			if (json.containsKey("launchedQuantity")) {
@@ -210,12 +204,30 @@ public class DeliveryManagerController {
 			}
 			if (json.containsKey("deliveredQuantity")) {
 				deliveredQuantity = (String) json.get("deliveredQuantity");
-			}
+			}*/
 			if (json.containsKey("savedDate")) {
 				savedDate = (String) json.get("savedDate");
 			}
 			if (json.containsKey("machineId")) {
 				machineId = (String) json.get("machineId");
+			}
+			if (json.containsKey("details")) {
+				detailsOfJob = (String) json.get("details");
+			}
+			if (json.containsKey("quantity")) {
+				quantity = (String) json.get("quantity");
+			}
+			if (json.containsKey("orderNo")) {
+				orderNo = (String) json.get("orderNo");
+			}
+			if (json.containsKey("workingHours")) {
+				workingHours = (String) json.get("workingHours");
+			}
+			if (json.containsKey("breakDown")) {
+				breakDown = (String) json.get("breakDown");
+			}
+			if (json.containsKey("remarks")) {
+				remarks = (String) json.get("remarks");
 			}
 
 			details = new JobDetails();
@@ -229,12 +241,24 @@ public class DeliveryManagerController {
 			fetchedmachine = deliveryManagementService.getMachine(Integer
 					.parseInt(machineId));
 			System.out.println(fetchedmachine);
+			System.out.println("Break down");
+			System.out.println(breakDown);
+			System.out.println(Integer.parseInt(breakDown));
+			System.out.println("working hours");
+			System.out.println(workingHours);
+			System.out.println(Integer.parseInt(workingHours));
 
 			details.setEmployee(fetchedemployee);
 			details.setPartNumber(Integer.parseInt(partNumber));
-			details.setPlannedQuantity(plannedQuantity);
+			/*details.setPlannedQuantity(plannedQuantity);
 			details.setLaunchedQuantity(launchedQuantity);
-			details.setDeliveredQuantity(deliveredQuantity);
+			details.setDeliveredQuantity(deliveredQuantity);*/
+			details.setDetails(detailsOfJob);
+			details.setQunatity(Integer.parseInt(quantity));
+			details.setProductionOrderNumber(Integer.parseInt(orderNo));
+			details.setWorkingHours(Integer.parseInt(workingHours));
+			details.setBreakdownHours(Integer.parseInt(breakDown));
+			details.setRemarks(remarks);
 			details.setMachine(fetchedmachine);
 			System.out.println(savedDate);
 			java.sql.Date sqlDate = new java.sql.Date((new SimpleDateFormat(
@@ -380,6 +404,103 @@ public class DeliveryManagerController {
 		}
 
 		return fetchedJobDetails;
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getJobDetailsByMachineId", method = RequestMethod.POST)
+	public List<JobDetails> getJobDetailsByMachineId(@RequestBody String machine)
+			throws Exception {
+
+		List<JobDetails> fetchedJobDetails = null;
+		JSONObject json = new JSONObject();
+		String machineId = null;
+
+		try {
+			json = (JSONObject) (new JSONParser().parse(machine));
+			if (json.containsKey("machineId")) {
+				machineId = (String) json.get("machineId");
+			}
+			fetchedJobDetails = deliveryManagementService
+					.findJobDetailsByMachineName(Integer.parseInt(machineId));
+
+		} catch (Exception e) {
+			LOG.error("Not able to get Details", e);
+		}
+
+		return fetchedJobDetails;
+	}
+	
+	
+	@RequestMapping("/getAllJobDetails")
+	public String getAllJobDetails(Model model) {
+		
+		try {
+		List<JobDetails> jobDetails = deliveryManagementService
+				.getAllJobDetails();
+		model.addAttribute("jobDetails", jobDetails);
+		} catch (Exception e) {
+			LOG.error("Unable to fetch job details", e);
+		}
+		
+		return "showAllJobDetails";
+	}
+	
+	@ResponseBody
+	@RequestMapping(value = "/getFilteredJobDetailsByMachine", method = RequestMethod.POST)
+	public List<JobDetails> getFilteredJobDetailsByMachine(
+			@RequestBody String filteringDetails) throws Exception {
+
+		List<JobDetails> filteredJobDetails = null;
+		JSONObject json = new JSONObject();
+		String machineId = null;
+		String fromDate = null;
+		String toDate = null;
+		Date fromDateAsDate = null;
+		Date toDateAsDate = null;
+
+		try {
+			json = (JSONObject) (new JSONParser().parse(filteringDetails));
+			if (json.containsKey("machineId")) {
+				machineId = (String) json.get("machineId");
+			}
+			if (json.containsKey("fromDate")) {
+				fromDate = (String) json.get("fromDate");
+			}
+			if (json.containsKey("toDate")) {
+				toDate = (String) json.get("toDate");
+			}
+			
+			Machine fetchedmachine = new Machine();
+			// emp.setId(Integer.parseInt(empId));
+			fetchedmachine = deliveryManagementService.getMachine(Integer.parseInt(machineId));
+			// emp.setFirstName(empName);
+			// emp.setLastName(empName);
+			// emp.setEmployeeId(12);
+			System.out.println(fetchedmachine);
+
+			System.out.println(fromDate);
+			System.out.println(toDate);
+
+			fromDateAsDate = new SimpleDateFormat("MM/dd/yyyy").parse(fromDate);
+			toDateAsDate = new SimpleDateFormat("MM/dd/yyyy").parse(toDate);
+			
+			
+			String fromDateAsString = new SimpleDateFormat("yyyy-MM-dd").format(fromDateAsDate);
+			String toDateAsString = new SimpleDateFormat("yyyy-MM-dd").format(toDateAsDate);
+
+			System.out.println(fromDateAsString);
+			System.out.println(toDateAsString);
+
+			filteredJobDetails = deliveryManagementService
+					.filterJobDetailsByMachineAndDate(fetchedmachine,
+							java.sql.Date.valueOf(fromDateAsString),
+							java.sql.Date.valueOf(toDateAsString));
+
+		} catch (Exception e) {
+			LOG.error("Not able to get Details", e);
+		}
+
+		return filteredJobDetails;
 	}
 
 }

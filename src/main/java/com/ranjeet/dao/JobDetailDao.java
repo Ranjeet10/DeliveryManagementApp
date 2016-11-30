@@ -212,5 +212,66 @@ public class JobDetailDao {
 		return jobDetails;
 		
 	}
+	
+	@Transactional(propagation = Propagation.SUPPORTS)
+	public List<JobDetails> getAllJobDetails() throws Exception {
+		
+		try {
+			return hibernateTemplate.loadAll(JobDetails.class);
+		} catch (DataAccessException e) {
+			LOG.debug(e.getMessage());
+			throw new Exception(e.getMessage(), e);
+		}
+		
+	}
+
+	@Transactional(propagation = Propagation.SUPPORTS)
+	@SuppressWarnings("unchecked")
+	public List<JobDetails> findJobDetailsByMachineName(int machineId) throws Exception {
+		
+		List<JobDetails> jobDetails = null;
+		try {
+			Session session = this.sessionFactory.getCurrentSession();
+			Criteria criteria = session.createCriteria(JobDetails.class)
+					.createAlias("machine", "m")
+					.add(Restrictions.eq("m.id", machineId));
+			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			jobDetails = criteria.list();
+		} catch (DataAccessException e) {
+			LOG.debug(e.getMessage());
+			throw new Exception(e.getMessage(), e);
+		}
+		return jobDetails;
+		
+	}
+
+	
+	@Transactional(propagation = Propagation.SUPPORTS)
+	@SuppressWarnings("unchecked")
+	public List<JobDetails> filterJobDetailsByMachineAndDate(Machine machine,
+			Date fromDate, Date toDate) throws Exception {
+
+		List<JobDetails> filteredjobDetails = null;
+		try {
+			Session session = this.sessionFactory.getCurrentSession();
+			Criteria criteria = session
+					.createCriteria(JobDetails.class)
+					// .createAlias("employee", "e")
+					// .createAlias("savedDate", "savedDate")
+					// .createAlias("empId", "empId")
+					// .add(Restrictions.eq("e.id", empId))
+					.add(Restrictions.ge("savedDate", fromDate))
+					.add(Restrictions.le("savedDate", toDate))
+					.add(Restrictions.eq("machine", machine));
+			criteria.setResultTransformer(CriteriaSpecification.DISTINCT_ROOT_ENTITY);
+			filteredjobDetails = criteria.list();
+		} catch (DataAccessException e) {
+			LOG.debug(e.getMessage());
+			throw new Exception(e.getMessage(), e);
+		}
+		return filteredjobDetails;
+
+	}
+
 
 }

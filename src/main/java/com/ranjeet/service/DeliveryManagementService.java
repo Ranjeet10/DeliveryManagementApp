@@ -5,6 +5,7 @@ import java.util.List;
 
 import org.apache.log4j.Logger;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.dao.DataAccessException;
 import org.springframework.stereotype.Service;
 
 import com.ranjeet.dao.JobDetailDao;
@@ -22,14 +23,14 @@ public class DeliveryManagementService {
 	private JobDetailDao jobDetailsDao;
 
 	public List<Employee> getAllEmployees() throws Exception {
-		List<Employee> cities = null;
+		List<Employee> employees = null;
 		try {
-			cities = jobDetailsDao.getAllEmployees();
+			employees = jobDetailsDao.getAllEmployees();
 		} catch (Exception e) {
 			LOG.error("Error in fetching employees" + e);
 			throw new Exception(e);
 		}
-		return cities;
+		return employees;
 	}
 
 	public void saveJobDetails(JobDetails jobDetails) throws Exception {
@@ -153,5 +154,42 @@ public class DeliveryManagementService {
 
 		return fetchedJobDetailsByPartNumber;
 	}
+
+	public List<JobDetails> getAllJobDetails() throws Exception {
+
+		List<JobDetails> jobDetails = null;
+		try {
+			jobDetails = jobDetailsDao.getAllJobDetails();
+		} catch (Exception e) {
+			LOG.error("Error in fetching job details" + e);
+			throw new Exception(e);
+		}
+		return jobDetails;
+
+	}
+	
+	public List<JobDetails> findJobDetailsByMachineName(int machineId)
+			throws Exception {
+
+		List<JobDetails> fetchedJobDetailsByPartNumber = null;
+
+		fetchedJobDetailsByPartNumber = jobDetailsDao
+				.findJobDetailsByMachineName(machineId);
+
+		return fetchedJobDetailsByPartNumber;
+	}
+
+	
+	public List<JobDetails> filterJobDetailsByMachineAndDate(Machine machine,
+			Date fromDate, Date toDate) throws Exception {
+
+		List<JobDetails> filteredJobDetails = null;
+
+		filteredJobDetails = jobDetailsDao.filterJobDetailsByMachineAndDate(machine,
+				fromDate, toDate);
+
+		return filteredJobDetails;
+	}
+
 
 }

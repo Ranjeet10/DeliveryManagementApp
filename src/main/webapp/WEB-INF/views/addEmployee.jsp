@@ -27,6 +27,8 @@
 	src="${pageContext.request.contextPath}/resources/js/jquery-3.1.0.min.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/js/jquery-ui.min.js"></script>
 
 </head>
 <body>
@@ -45,6 +47,7 @@
 				<div></div><a class="myFont-text navbar-brand" href="/DeliveryManagement"
 				style="color: blue;">Delivery Management System</a></div>
 				<div><h3 style="margin-top: 0px;">Job Detail Information</h3></div>
+				<span style="color:red; padding:5px;" id="msg"></span>
 				<table>
 					<tr>
 						<td>Enter Employee Id:</td>
@@ -65,7 +68,7 @@
 							value="Add Employee"></td>
 					</tr>
 				</table>
-				<span id="msg"></span>
+				<span style="color:green; padding:5px;" id="savingMsg"></span>
 			</div>
 		</div>
 </body>

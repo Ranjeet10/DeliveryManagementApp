@@ -27,6 +27,8 @@
 	src="${pageContext.request.contextPath}/resources/js/jquery-3.1.0.min.js"></script>
 <script type="text/javascript"
 	src="${pageContext.request.contextPath}/resources/js/main.js"></script>
+<script type="text/javascript"
+	src="${pageContext.request.contextPath}/resources/js/jquery-ui.min.js"></script>
 
 </head>
 <body>
@@ -35,6 +37,7 @@
 			<div class="row">
 				<a style="display:block;" href="addEmployeeDetails">Add Employee Details</a>
 				<a style="display:block;" href="addMachineDetails">Add Machine Details</a>
+				<a style="display:block;" href="getAllJobDetails">Get All Job Details</a>
 			</div>
 		</div>
 </body>

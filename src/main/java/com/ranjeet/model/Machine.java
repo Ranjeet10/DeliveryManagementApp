@@ -23,8 +23,8 @@ public class Machine {
 	@Column(name="id")
 	private int id;
 	
-	@Column(name="machine_id", nullable=false)
-	private int machineId;
+	//@Column(name="machine_id", nullable=false)
+	//private int machineId;
 	
 	@Column(name="machine_name", nullable=false)
 	private String machineName;
@@ -41,13 +41,13 @@ public class Machine {
 		this.id = id;
 	}
 
-	public int getMachineId() {
-		return machineId;
-	}
+	//public int getMachineId() {
+	//	return machineId;
+	//}
 
-	public void setMachineId(int machineId) {
-		this.machineId = machineId;
-	}
+	//public void setMachineId(int machineId) {
+	//	this.machineId = machineId;
+	//}
 
 	public String getMachineName() {
 		return machineName;
